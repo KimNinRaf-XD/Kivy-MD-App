@@ -1,5 +1,5 @@
 import json
-from typing import Any, NamedTuple
+from typing import Any
 
 from kivy.core.text import LabelBase
 from kivy.core.window import Window
@@ -8,9 +8,7 @@ from kivy.network.urlrequest import UrlRequest
 from kivy.uix.screenmanager import Screen
 from kivymd.app import MDApp
 from kivymd.uix.button.button import MDFlatButton
-from kivymd.uix.card.card import MDCard
 from kivymd.uix.dialog.dialog import MDDialog
-from kivymd.uix.label.label import MDLabel
 from kivymd.uix.screenmanager import MDScreenManager
 
 Window.size = (360, 640)
@@ -20,7 +18,11 @@ def show_dialog(title: str, message: str):
     dialog = MDDialog(
         title=title,
         text=message,
-        buttons=[MDFlatButton(text="Close", on_release=lambda *x: dialog.dismiss())],
+        buttons=[
+            MDFlatButton(
+                text="Close", on_release=lambda *x: dialog.dismiss()  # type:ignore
+            )
+        ],
     )
     dialog.open()
 
@@ -122,32 +124,34 @@ class LoginScreen(Screen):
 
 
 class MainScreen(Screen):
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(**kwargs)  # type: ignore
+    def on_enter(self, *args: Any):
+        super().on_enter(*args)  # type: ignore
 
-        self.get_recipes()
+        self.load_recipes()
 
-    def get_recipes(self):
+    def load_recipes(self):
         UrlRequest(
             url="http://127.0.0.1:5000/api/recipes",
-            on_success=self.get_recipes_success,
-            on_failure=self.get_recipes_failure,
+            on_success=self.on_load_recipes_success,
+            on_failure=self.on_load_recipes_failure,
         )
 
-    def get_recipes_success(self, req: UrlRequest, result: Any):
+    def on_load_recipes_success(self, req: UrlRequest, result: Any):
         recipe_layout = self.ids.recipes_layout
         for recipe in result["Recipes"]:
             print(recipe)
 
             recipe_card = Builder.load_file("components/recipe_card.kv")
+            if not recipe_card:
+                continue
             recipe_card.ids.title.text = recipe["name"]
             recipe_card.ids.ingredients.text = recipe["ingredients"]
             recipe_card.ids.instructions.text = recipe["instructions"]
 
             recipe_layout.add_widget(recipe_card)
 
-    def get_recipes_failure(self, req: UrlRequest, result: Any):
-        pass
+    def on_load_recipes_failure(self, req: UrlRequest, result: Any):
+        show_dialog("Error", "Failed to load recipes")
 
     def logout(self):
         show_dialog("Success", "Signed out successfully")
@@ -189,21 +193,9 @@ class MainScreen(Screen):
     def on_add_recipe_failure(self):
         show_dialog("Error", "Failed to add recipe")
 
-    # def load_recipes(self):
-    #     UrlRequest(
-    #         url="http://127.0.0.1:5000/api/recipes",
-    #         on_success=self.on_load_recipes_success,
-    #         on_failure=self.on_load_recipes_failure,
-    #     )
-
-    # def on_load_recipes_success(self, req, result):
-    #     recipes = result.get("recipes", [])
-    #     self.recipe_names = [recipe["name"] for recipe in recipes]
-
-    # def on_load_recipes_failure(self):
-    #     self.show_dialog("Error", "Failed to load recipes")
-
 
 if __name__ == "__main__":
-    LabelBase.register(name="Gagalin", fn_regular="assets/fonts/Gagalin-Regular.ttf")
+    LabelBase.register(  # type:ignore
+        name="Gagalin", fn_regular="assets/fonts/Gagalin-Regular.ttf"
+    )
     MainApp().run()
