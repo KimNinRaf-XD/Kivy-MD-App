@@ -1,4 +1,11 @@
 {
+    "cSpell.words": [
+        "clearcolor",
+        "kivy",
+        "kivymd",
+        "screenmanager",
+        "urlrequest"
+    ],
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
     },

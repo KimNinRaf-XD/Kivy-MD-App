@@ -1,23 +1,22 @@
 import json
-from kivymd.app import MDApp
-from kivy.core.window import Window
+
 from kivy.core.text import LabelBase
+from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.network.urlrequest import UrlRequest
 from kivy.properties import ListProperty
-
-from kivymd.uix.screenmanager import ScreenManager
-from kivymd.uix.dialog import MDDialog
-from kivymd.uix.button import MDFlatButton
-
 from kivy.uix.screenmanager import Screen
+from kivymd.app import MDApp
+from kivymd.uix.button.button import MDFlatButton
+from kivymd.uix.dialog.dialog import MDDialog
+from kivymd.uix.screenmanager import MDScreenManager
 
 Window.size = (360, 640)
 
 
 class MainApp(MDApp):
     def build(self):
-        screen_manager = ScreenManager()
+        screen_manager = MDScreenManager()
 
         Builder.load_file("screens/welcome.kv")
         Builder.load_file("screens/auth/login.kv")
