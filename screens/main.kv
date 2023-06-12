@@ -17,36 +17,8 @@
                 icon: 'home'
 
                 MDFloatLayout:
+                    id: recipes_layout
                     md_bg_color: (255/255, 248/255, 225/255, 1)
-                    size_hint_y: None
-
-                    MDCard:
-                        orientation: 'vertical'
-                        size_hint: 0.8, None
-                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-                        padding: 25
-                        spacing: 25
-
-                        MDLabel:
-                            text: 'White Rice'
-                            text_color: (51/255, 51/255, 51/255, 1)
-                            font_name: 'Gagalin'
-                            font_size: '20sp'
-                            pos_hint: {'center_y': 0.7}
-
-                        MDLabel:
-                            text: 'weqretrytyuklihkjhgfsdasfggjhl;jkljkhmnbdvsdadfgdshfjkghlh;.jkghjfhndgsbfadfsDFASJDKFLKJFHDGDSFDFASDSDHJFJKGLKHHJHJTRTTUYIH;KJHGFD'
-                            text_color: (51/255, 51/255, 51/255, 1)
-                            font_name: 'Gagalin'
-                            font_size: '14sp'
-                            pos_hint: {'center_y': 0.6}
-
-                        MDLabel:
-                            text: 'weqretrytyuklihkjhgfsdasfggjhl;jkljkhmnbdvsdadfgdshfjkghlh;.jkghjfhndgsbfadfsDFASJDKFLKJFHDGDSFDFASDSDHJFJKGLKHHJHJTRTTUYIH;KJHGFD'
-                            text_color: (51/255, 51/255, 51/255, 1)
-                            font_name: 'Gagalin'
-                            font_size: '14sp'
-                            pos_hint: {'center_y': 0.5}
 
 
             MDBottomNavigationItem:
@@ -219,3 +191,6 @@
                         font_size: '16sp'
                         md_bg_color: (255/255, 0/255, 0/255, 1)
                         pos_hint: {'center_x': 0.66, 'center_y': 0.14}
+
+
+<Recipe>:

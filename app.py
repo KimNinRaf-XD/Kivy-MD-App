@@ -1,15 +1,16 @@
 import json
-from typing import Any
+from typing import Any, NamedTuple
 
 from kivy.core.text import LabelBase
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.network.urlrequest import UrlRequest
-from kivy.properties import ListProperty
 from kivy.uix.screenmanager import Screen
 from kivymd.app import MDApp
 from kivymd.uix.button.button import MDFlatButton
+from kivymd.uix.card.card import MDCard
 from kivymd.uix.dialog.dialog import MDDialog
+from kivymd.uix.label.label import MDLabel
 from kivymd.uix.screenmanager import MDScreenManager
 
 Window.size = (360, 640)
@@ -121,10 +122,35 @@ class LoginScreen(Screen):
 
 
 class MainScreen(Screen):
-    recipe_names = ListProperty([])
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(**kwargs)  # type: ignore
+
+        self.get_recipes()
+
+    def get_recipes(self):
+        UrlRequest(
+            url="http://127.0.0.1:5000/api/recipes",
+            on_success=self.get_recipes_success,
+            on_failure=self.get_recipes_failure,
+        )
+
+    def get_recipes_success(self, req: UrlRequest, result: Any):
+        recipe_layout = self.ids.recipes_layout
+        for recipe in result["Recipes"]:
+            print(recipe)
+
+            recipe_card = Builder.load_file("components/recipe_card.kv")
+            recipe_card.ids.title.text = recipe["name"]
+            recipe_card.ids.ingredients.text = recipe["ingredients"]
+            recipe_card.ids.instructions.text = recipe["instructions"]
+
+            recipe_layout.add_widget(recipe_card)
+
+    def get_recipes_failure(self, req: UrlRequest, result: Any):
+        pass
 
     def logout(self):
-        self.show_dialog("Success", "Signed out successfully")
+        show_dialog("Success", "Signed out successfully")
         self.manager.transition.direction = "right"
         self.manager.current = "login"
 
@@ -134,7 +160,7 @@ class MainScreen(Screen):
         recipe_instructions = self.ids.recipe_instructions.text
 
         if not all([recipe_name, recipe_ingredients, recipe_instructions]):
-            self.show_dialog("Error", "Enter all the recipe details!")
+            show_dialog("Error", "Enter all the recipe details!")
             return
 
         UrlRequest(
@@ -151,9 +177,9 @@ class MainScreen(Screen):
             on_failure=self.on_add_recipe_failure,
         )
 
-    def on_add_recipe_success(self, req, result):
+    def on_add_recipe_success(self, req: UrlRequest, result: dict[str, Any]):
         message = result.get("message", "Recipe added successfully!")
-        self.show_dialog("Success", message)
+        show_dialog("Success", message)
 
         # Clear MDTextFields
         self.ids.recipe_name.text = ""
@@ -161,17 +187,7 @@ class MainScreen(Screen):
         self.ids.recipe_instructions.text = ""
 
     def on_add_recipe_failure(self):
-        self.show_dialog("Error", "Failed to add recipe")
-
-    def show_dialog(self, title, message):
-        dialog = MDDialog(
-            title=title,
-            text=message,
-            buttons=[
-                MDFlatButton(text="Close", on_release=lambda *x: dialog.dismiss())
-            ],
-        )
-        dialog.open()
+        show_dialog("Error", "Failed to add recipe")
 
     # def load_recipes(self):
     #     UrlRequest(
