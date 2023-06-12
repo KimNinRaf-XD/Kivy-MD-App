@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 from kivy.core.text import LabelBase
 from kivy.core.window import Window
@@ -12,6 +13,15 @@ from kivymd.uix.dialog.dialog import MDDialog
 from kivymd.uix.screenmanager import MDScreenManager
 
 Window.size = (360, 640)
+
+
+def show_dialog(title: str, message: str):
+    dialog = MDDialog(
+        title=title,
+        text=message,
+        buttons=[MDFlatButton(text="Close", on_release=lambda *x: dialog.dismiss())],
+    )
+    dialog.open()
 
 
 class MainApp(MDApp):
@@ -57,9 +67,9 @@ class SignupScreen(Screen):
             on_failure=self.on_register_failure,
         )
 
-    def on_register_success(self, req, result):
+    def on_register_success(self, req: UrlRequest, result: dict[str, Any]):
         message = result.get("error", "Registration Successful. Welcome to the Hub!")
-        self.show_dialog("Success", message)
+        show_dialog("Success", message)
 
         # Clear MDTextFields
         self.ids.name_field.text = ""
@@ -71,20 +81,10 @@ class SignupScreen(Screen):
         self.manager.current = "main"
 
     def on_register_failure(self):
-        self.show_dialog("Error", "Failed to register account")
+        show_dialog("Error", "Failed to register account")
 
     def review_credentials(self):
-        self.show_dialog("Error", "Enter your credentials first!")
-
-    def show_dialog(self, title, message):
-        dialog = MDDialog(
-            title=title,
-            text=message,
-            buttons=[
-                MDFlatButton(text="Close", on_release=lambda *x: dialog.dismiss())
-            ],
-        )
-        dialog.open()
+        show_dialog("Error", "Enter your credentials first!")
 
 
 class LoginScreen(Screen):
@@ -95,38 +95,29 @@ class LoginScreen(Screen):
         )
 
         if not all([username, password]):
-            self.show_dialog("Error", "Enter your credentials first!")
+            show_dialog("Error", "Enter your credentials first!")
             return
 
         UrlRequest(
-            url="http://127.0.0.1:5000/api/accounts",
-            on_success=lambda req, result: self.check_credentials(
-                result, username, password
-            ),
+            url="http://127.0.0.1:5000/auth/login",
+            req_body=json.dumps({"username": username, "password": password}),
+            req_headers={"Content-Type": "application/json"},
+            on_success=self.login_success,
+            on_failure=self.login_failure,
         )
 
-    def check_credentials(self, data, username, password):
-        accounts = data.get("Accounts", [])
-        for account in accounts:
-            if account["username"] == username and account["password"] == password:
-                self.show_dialog("Success", "Welcome Back!")
-                self.manager.transition.direction = "left"
-                self.manager.current = "main"
-                return
+    def login_success(self, request: UrlRequest, result: dict[str, str]):
+        self.ids.username_field.text = ""
 
-        self.show_dialog(
-            "Error", "Invalid credentials. Username and Password do not match!"
-        )
+        print("Login successful")
+        # user_id = result.get("id")
+        # username = result.get("username")
+        show_dialog("Success", "Welcome Back!")
+        self.manager.transition.direction = "left"
+        self.manager.current = "main"
 
-    def show_dialog(self, title, message):
-        dialog = MDDialog(
-            title=title,
-            text=message,
-            buttons=[
-                MDFlatButton(text="Close", on_release=lambda *x: dialog.dismiss())
-            ],
-        )
-        dialog.open()
+    def login_failure(self, request: UrlRequest, result: str):
+        show_dialog("Error", "Invalid credentials. Username and Password do not match!")
 
 
 class MainScreen(Screen):

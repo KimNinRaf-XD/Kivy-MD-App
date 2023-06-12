@@ -283,34 +283,30 @@ The following example marks the anchors and references contained in a label::
     TestApp().run()
 
 '''
-__all__ = ('Label', )
+__all__ = ("Label",)
+
 class Label(Widget):
-    '''Label class, see module documentation for more information.
+    """Label class, see module documentation for more information.
 
     :Events:
         `on_ref_press`
             Fired when the user clicks on a word referenced with a
             ``[ref]`` tag in a text markup.
-    '''
+    """
+
     __events__ = ...
     _font_properties = ...
-    def __init__(self, **kwargs) -> None:
-        ...
-    
-    def texture_update(self, *largs): # -> None:
-        '''Force texture recreation with the current Label properties.
+    def __init__(self, **kwargs) -> None: ...
+    def texture_update(self, *largs):  # -> None:
+        """Force texture recreation with the current Label properties.
 
         After this function call, the :attr:`texture` and :attr:`texture_size`
         will be updated in this order.
-        '''
+        """
         ...
-    
-    def on_touch_down(self, touch): # -> bool:
-        ...
-    
-    def on_ref_press(self, ref): # -> None:
-        ...
-    
+    def on_touch_down(self, touch): ...
+    def on_ref_press(self, ref): ...
+
     disabled_color = ...
     text = ...
     text_size = ...
@@ -354,5 +350,3 @@ class Label(Widget):
     font_hinting = ...
     font_kerning = ...
     font_blended = ...
-
-
