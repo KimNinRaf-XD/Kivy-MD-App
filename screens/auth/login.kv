@@ -1,0 +1,67 @@
+<LoginScreen>:
+    name: 'login'
+    MDFloatLayout: 
+        md_bg_color: (255/255, 248/255, 225/255, 1)
+        
+        MDIconButton:
+            icon: 'arrow-left'
+            pos_hint: {'center_y': 0.95}
+            user_font_size: '30sp'
+            on_release:
+                root.manager.transition.direction = 'right'
+                root.manager.current = 'welcome'
+        
+        MDLabel:
+            text: "Glad You're Back to the Hub!"
+            font_name: 'Gagalin'
+            font_size: '18sp'
+            halign: 'center'
+            pos_hint: {'center_y': 0.86}
+            color: (105/255, 105/255, 105/255, 1)
+        
+        Image:
+            source: 'assets/images/image-B.png'
+            size_hint: 0.7, 0.7
+            pos_hint: {'center_x': 0.5, 'center_y': 0.64}
+        
+        MDTextField:
+            id: username_field
+            hint_text: 'Enter Username'
+            pos_hint: {'center_x': 0.5, 'center_y': 0.41}
+            hint_text_color_focus: (105/255, 105/255, 105/255, 1)
+            text_color_focus: (51/255, 51/255, 51/255, 1)
+            size_hint_x: 0.8
+            mode: 'rectangle'
+            line_width: 1
+            line_color_focus: (1, 193 / 255, 7 / 255, 1)
+            line_color_normal: (105/255, 105/255, 105/255, 1)
+        
+        MDTextField:
+            id: password_field
+            hint_text: 'Enter Password'
+            password: True
+            pos_hint: {'center_x': 0.5, 'center_y': 0.30}
+            hint_text_color_focus: (105/255, 105/255, 105/255, 1)
+            text_color_focus: (51/255, 51/255, 51/255, 1)
+            size_hint_x: 0.8
+            mode: 'rectangle'
+            line_width: 1
+            line_color_focus: (1, 193 / 255, 7 / 255, 1)
+            line_color_normal: (105/255, 105/255, 105/255, 1)
+        
+        MDRaisedButton: 
+            text: 'LOGIN'
+            text_color: (51/255, 51/255, 51/255, 1)
+            font_name: 'Gagalin'
+            font_size: '18sp'
+            pos_hint: {'center_x': 0.5, 'center_y': 0.19}
+            size_hint: 0.66, 0.07
+            md_bg_color: (255/255, 224/255, 130/255, 1)
+            on_release: root.login()
+            canvas.before:
+                Color:
+                    rgb: (255/255, 193/255, 7/255, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [5]
